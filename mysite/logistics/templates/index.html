@@ -1,0 +1,47 @@
+{% extends "base_generic.html" %}
+<!-- Add additional CSS in static file -->
+{% load static %}
+<link href="{{ STATIC_URL }}css/styles.css" rel="stylesheet" type="text/css" />
+
+
+{% block content %}
+  <h2 style="text-align: center; margin-top: 20px">Welcome to the development version of the website</h2>
+
+  <form action="/logistics/" method="post">
+    {% csrf_token %}
+    <label for="start">开始日期：</label>
+    <input type="date" id="start" name="date-start" /><br>
+
+    <label for="end">结束日期：</label>
+    <input type="date" id="end" name="date-end" /><br>
+
+    <label for="tech">技术人员:</label>
+    <select name="tech" id="tech">
+      {% for person in tech_list %}
+      <option value="{{person}}">{{person}}</option>
+      {%endfor%}
+    </select><br>
+
+    <label for="mode">完成模式:</label>
+    <select name="mode" id="mode">
+      <option value="Independent">Independent</option>
+      <option value="Cooperative">Cooperative</option>
+    </select><br>
+      
+    <label for="threshold">选择阈值:</label>
+    <select name="threshold" id="threshold">
+      <option value="5天95%">5天 95%</option>
+      <option value="7天97%">7天 97%</option>
+    </select><br>
+
+    <input type="submit" value="确认">
+  </form>
+  <br>
+
+  {% if form_posted %}
+  <h5 style="text-align: center;"> <strong>在选择的时间范围内({% if start_date %}{{start_date}}{% else %}N/A{% endif %} - {% if end_date %}{{end_date}}{% else %}N/A{% endif %})，
+    {% if tech != "None" %}{{tech}}{% else %}所有tech{% endif %}的{{mode}}模式准时率是: {{on_time_rate}}%，
+    在{{threshold}}阈值情况下 
+    {% if threshold_reached%} <strong style="color: green;">达标 </strong>{% else %} <strong style="color: red;">不达标 </strong>{%endif%}</h5>
+  {% endif %}
+{% endblock %}
